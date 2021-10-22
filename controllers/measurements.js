@@ -1,42 +1,29 @@
-const {writeApi,queryApi, bucket} = require('../db.js')
-const {Point} = require('@influxdata/influxdb-client')
+const {queryApi, url, bucket, org, token} = require('../db.js')
+const {InfluxDB, Point} = require('@influxdata/influxdb-client')
 
 function influx_read(query) {
     return new Promise((resolve, reject) => {
 
-        const result = []
+        const results = []
         queryApi.queryRows(query, {
             next(row, tableMeta) {
-                const {
-                    _time: time,
-                    _field: field,
-                    _value: value,
-                    _measurement: measurement
-
-                } = tableMeta.toObject(row)
-                result.push({
-                    time,
-                    field,
-                    value,
-                    measurement,
-
-                })
+                const result = tableMeta.toObject(row)
+                results.push(result)
             },
             error(error) {
                 reject(error)
             },
             complete() {
-                resolve(result)
+                resolve(results)
             },
         })
     })
-    
-
 }
 
 
 exports.read_points = async (req, res) => {
     const {measurement} = req.params
+    // TODO: range filters and tags
     const query = `
         from(bucket:"${bucket}") 
         |> range(start: -1d) 
@@ -48,13 +35,27 @@ exports.read_points = async (req, res) => {
 }
 
 exports.create_points = async (req, res) => {
-    const {measurement} = req.params
-    const tag_name = 'my_tag'
-    const tag_value = 'test'
-    const {value} = req.body
-    const point = new Point(measurement)
-        .tag(tag_name, tag_value)
-        .floatField('value', parseFloat(value))
 
+    const writeApi = new InfluxDB({url, token}).getWriteApi(org, bucket, 'ns')
+
+    const {measurement} = req.params
+    const {field, value} = req.body
+
+    const tag = {
+        name: 'my_tag',
+        value: 'test',
+    }
+
+    const point = new Point(measurement)
+        .tag(tag.name, tag.value)
+        .tag('tag 2', 'yes')
+        .floatField(field, parseFloat(value))
+        .timestamp(new Date())
+    
     writeApi.writePoint(point)
+
+    await writeApi.close()
+
+    res.send('OK')
+    console.log(`Point created in measurement ${measurement}`)
 }
