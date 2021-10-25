@@ -6,7 +6,7 @@ variables:
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
 
 # Building application for X86 plattforms
-containerization-x86:
+containerization:
   stage: containerization-x86
   tags:
     - "x86"
