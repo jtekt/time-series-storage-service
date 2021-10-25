@@ -3,13 +3,12 @@ const {json} = require('body-parser')
 const cors = require('cors')
 const dotenv = require('dotenv')
 const {author, name: application_name, version} = require('./package.json')
+const {url, bucket, org} = require('./db.js')
 const measurements_router = require('./routes/measurements.js')
 
 dotenv.config()
 
 const app_port = process.env.APP_PORT ?? 80
-
-
 
 const app = express()
 app.use(json())
@@ -20,6 +19,11 @@ app.get('/', (req, res) => {
       application_name,
       author,
       version,
+      influxdb: {
+        url,
+        bucket,
+        org
+      }
     })
   })
 
@@ -31,4 +35,3 @@ app.use('/measurements', measurements_router)
 app.listen(app_port, () => {
     console.log(`InfluxDB REST API v${version} listening on port ${app_port}`);
   })
-  
