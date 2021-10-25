@@ -27,6 +27,28 @@ const influx_read = (query) => {
   })
 }
 
+exports.get_measurements = async (req, res) => {
+
+  try {
+
+    let query = `
+    import \"influxdata/influxdb/schema\"
+    schema.measurements(bucket: \"${bucket}\")
+    `
+
+    // Run the query
+    const result = await influx_read(query)
+
+    const response = result.map(r => r._value)
+
+    // Respond to client
+    res.send(response)
+
+    console.log(`Measurements queried`)
+  } catch (error) {
+    error_handling(error,res)
+  }
+}
 
 exports.read_points = async (req, res) => {
 

@@ -1,9 +1,14 @@
 const {Router} = require('express')
-const {read_points, create_points} = require('../controllers/measurements.js')
+const {
+  get_measurements,
+  read_points,
+  create_points} = require('../controllers/measurements.js')
 
 
 const router = Router()
 
+router.route('/')
+  .get(get_measurements)
 
 router.route('/:measurement')
   .get(read_points)
