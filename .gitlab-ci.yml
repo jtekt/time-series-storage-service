@@ -1,0 +1,22 @@
+stages:
+  - containerization
+
+variables:
+  APPLICATION_NAME: influxdb-crud-rest-api
+  CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+
+# Building application for X86 plattforms
+containerization-x86:
+  stage: containerization-x86
+  tags:
+    - "x86"
+  script:
+    - >
+     if [ -z ${DOCKER_HUB_USERNAME} ];
+     then echo "No Docker login" -;
+     else echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin ;
+     fi
+    - docker build -t ${CONTAINER_IMAGE} .
+    - docker push ${CONTAINER_IMAGE}
+    # Cleanup
+    - docker image rm ${CONTAINER_IMAGE}

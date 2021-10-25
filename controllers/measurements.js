@@ -39,10 +39,11 @@ exports.get_measurements = async (req, res) => {
     // Run the query
     const result = await influx_read(query)
 
-    const response = result.map(r => r._value)
+    // Extract measurements from result
+    const measurements = result.map(r => r._value)
 
     // Respond to client
-    res.send(response)
+    res.send(measurements)
 
     console.log(`Measurements queried`)
   } catch (error) {
