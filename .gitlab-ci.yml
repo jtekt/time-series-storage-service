@@ -5,9 +5,8 @@ variables:
   APPLICATION_NAME: influxdb-crud-rest-api
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
 
-# Building application for X86 plattforms
 containerization:
-  stage: containerization-x86
+  stage: containerization
   tags:
     - "x86"
   script:
