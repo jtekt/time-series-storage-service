@@ -1,33 +1,11 @@
-const {queryApi, url, bucket, org, token} = require('../db.js')
+const {url, bucket, org, token} = require('../db.js')
+const {influx_read, error_handling} = require('../utils.js')
 const {InfluxDB, Point} = require('@influxdata/influxdb-client')
 
-const error_handling = (error, res) => {
-  res.status(500).send(error)
-  console.log(error)
-}
-
-
-const influx_read = (query) => {
-  // helper function for Influx queries
-  return new Promise((resolve, reject) => {
-
-    const results = []
-    queryApi.queryRows(query, {
-      next(row, tableMeta) {
-        const result = tableMeta.toObject(row)
-        results.push(result)
-      },
-      error(error) {
-        reject(error)
-      },
-      complete() {
-        resolve(results)
-      },
-    })
-  })
-}
 
 exports.get_measurements = async (req, res) => {
+
+  // List the available measurements in the InfluxDB Bucket
 
   try {
 
@@ -58,22 +36,26 @@ exports.read_points = async (req, res) => {
 
     const {measurement} = req.params
 
-    // Tags from request query string
-    const start = req.query.start || '-1d'
-    let tags = req.query.tags || []
-    if(typeof tags === 'string') tags = [tags]
+    // Time filters
+    const start = req.query.start || '-2d'
+    const stop = req.query.stop
+    const stop_query = stop ? ('stop: ' + stop) : ''
 
+    // Tags from request query string
+    let tags = req.query.tags || []
+    // If only one tag provided, will be parsed as string so put it in an array
+    if(typeof tags === 'string') tags = [tags]
 
     // WARNING: Risks of injection
     let query = `
       from(bucket:"${bucket}")
-      |> range(start: ${start})
+      |> range(start: ${start}, ${stop_query})
       |> filter(fn: (r) => r._measurement == "${measurement}")
     `
 
-    // Filter using tags if provided
+    //Adding tags to filter if provided in the query
     tags.forEach(tag => {
-      const tag_split = tag.split('=')
+      const tag_split = tag.split(':')
       query += `
       |> filter(fn: (r) => r["${tag_split[0]}"] == "${tag_split[1]}")
       `
@@ -114,7 +96,7 @@ exports.create_points = async (req, res) => {
 
     // Add tags
     tags.forEach(tag => {
-      const tag_split = tag.split('=')
+      const tag_split = tag.split(':')
       point = point.tag(tag_split[0],tag_split[1])
     })
 
