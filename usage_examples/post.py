@@ -1,11 +1,16 @@
 import requests
 import random
 
-MEASUREMENT = 'python_example'
 
-value = random.uniform(10, 30)
-url = f'http://localhost:7070/measurements/{MEASUREMENT}'
-params = {'tags': ['tag1:v1', 'othertag2:v2']}
-body = {'field': 'Temperature', 'value': value}
 
-requests.post(url, params=params, json=body)
+
+measurement = 'python_example_2'
+url = f'http://localhost:7070/measurements/{measurement}'
+tags = ['tag1:v1', 'othertag2:v2']
+data = {
+    'humidity': random.uniform(10, 100),
+    'temperature': random.uniform(10, 40),
+}
+params = {'tags': tags}
+
+requests.post(url, params=params, json=data)

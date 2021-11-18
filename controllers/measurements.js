@@ -81,11 +81,8 @@ exports.create_points = async (req, res) => {
     // measurement name from query parameters
     const {measurement} = req.params
 
-    // Point field and value from body
-    const {field, value, time} = req.body
+    const data = req.body
 
-    if(!field) throw {code: 400, message: 'field not defined'}
-    if(!value) throw {code: 400, message: 'value not defined'}
 
     // Tags from request query string
     let tags = req.query.tags || []
@@ -100,11 +97,24 @@ exports.create_points = async (req, res) => {
       point = point.tag(tag_split[0],tag_split[1])
     })
 
-    // Add value
-    point.floatField(field, parseFloat(value))
+    // Deal with values
+    for (const field in data) {
+      const value = data[field]
+      
+      if(field === 'time'){
+        // Add time if provided
+        point.timestamp(new Date(value))
+      }
+      else if( (typeof value) === 'number') {
+        // float value
+        point.floatField(field, parseFloat(value))
+      }
+      else {
+        // String value
+        point.stringField(field, value)
+      }
+    }
 
-    // Add time if provided
-    if(time) point.timestamp(new Date(time))
 
     // write
     writeApi.writePoint(point)
