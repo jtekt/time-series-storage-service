@@ -13,9 +13,14 @@ GET measurements/python_example?tags=fruit:banana&tags=area:tokyo
 ```
 
 ### Point registration (Python)
-```
-url = f'http://localhost:7070/measurements/{MEASUREMENT}'
-params = {'tags': ['tag1:v1', 'othertag2:v2']}
-body = {'field': 'Temperature', 'value': value}
-requests.post(url, params=params, json=body)
+```python
+measurement = 'environment_sensing'
+url = f'http://localhost:7070/measurements/{measurement}'
+tags = ['building:main', 'room:lobby']
+data = {
+    'humidity': 50.3,
+    'temperature': 24.7,
+}
+params = {'tags': tags}
+requests.post(url, params=params, json=data)
 ```
