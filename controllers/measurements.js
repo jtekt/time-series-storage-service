@@ -1,6 +1,6 @@
-const {url, bucket, org, token} = require('../db.js')
-const {influx_read, error_handling} = require('../utils.js')
-const {InfluxDB, Point} = require('@influxdata/influxdb-client')
+const { bucket, writeApi } = require('../db.js')
+const { influx_read, error_handling } = require('../utils.js')
+const { Point } = require('@influxdata/influxdb-client')
 
 
 exports.get_measurements = async (req, res) => {
@@ -24,6 +24,16 @@ exports.get_measurements = async (req, res) => {
     res.send(measurements)
 
     console.log(`Measurements queried`)
+  } catch (error) {
+    error_handling(error,res)
+  }
+}
+
+exports.delete_measurement = async (req, res) => {
+
+  try {
+    const {measurement} = req.params
+    throw 'Not implemented'
   } catch (error) {
     error_handling(error,res)
   }
@@ -76,7 +86,7 @@ exports.read_points = async (req, res) => {
 exports.create_points = async (req, res) => {
 
   try {
-    const writeApi = new InfluxDB({url, token}).getWriteApi(org, bucket, 'ns')
+    //const writeApi = new InfluxDB({url, token}).getWriteApi(org, bucket, 'ns')
 
     // measurement name from query parameters
     const {measurement} = req.params
@@ -116,11 +126,9 @@ exports.create_points = async (req, res) => {
     }
 
 
-    // write
+    // write (flush is to actually perform the operation)
     writeApi.writePoint(point)
-
-    // Close
-    await writeApi.close()
+    await writeApi.flush()
 
     // Respond
     res.send('OK')
