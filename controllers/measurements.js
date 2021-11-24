@@ -46,15 +46,21 @@ exports.read_points = async (req, res) => {
 
     const {measurement} = req.params
 
-    // Time filters
-    const start = req.query.start || '-2d'
-    const stop = req.query.stop
-    const stop_query = stop ? ('stop: ' + stop) : ''
+    // Filters
+    // Using let because some variable types might change
+    let {
+      start = '-2d',
+      stop,
+      tags = [],
+      fields = [],
+    } = req.query
 
-    // Tags from request query string
-    let tags = req.query.tags || []
+    const stop_query = stop ? (`stop: ${stop}`) : ''
+
+
     // If only one tag provided, will be parsed as string so put it in an array
     if(typeof tags === 'string') tags = [tags]
+    if(typeof fields === 'string') fields = [fields]
 
     // WARNING: Risks of injection
     let query = `
@@ -62,6 +68,12 @@ exports.read_points = async (req, res) => {
       |> range(start: ${start}, ${stop_query})
       |> filter(fn: (r) => r._measurement == "${measurement}")
     `
+
+    //Adding fields to filter if provided in the query
+    if(fields.length){
+      const fields_joined = fields.map( f => `r["_field"] == "${f}"`).join(' or ')
+      query += `|> filter(fn: (r) => ${fields_joined})`
+    }
 
     //Adding tags to filter if provided in the query
     tags.forEach(tag => {
@@ -110,7 +122,7 @@ exports.create_points = async (req, res) => {
     // Deal with values
     for (const field in data) {
       const value = data[field]
-      
+
       if(field === 'time'){
         // Add time if provided
         point.timestamp(new Date(value))
