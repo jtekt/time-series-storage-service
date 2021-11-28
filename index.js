@@ -1,9 +1,12 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const {version} = require('./package.json')
 const root_router = require('./routes/root.js')
 const measurements_router = require('./routes/measurements.js')
+const {
+  version,
+  author,
+} = require('./package.json')
 
 dotenv.config()
 

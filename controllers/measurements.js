@@ -1,6 +1,12 @@
-const { bucket, writeApi } = require('../db.js')
-const { influx_read, error_handling } = require('../utils.js')
+const { error_handling } = require('../utils.js')
 const { Point } = require('@influxdata/influxdb-client')
+const {
+  org,
+  bucket,
+  writeApi,
+  influx_read,
+  deleteApi
+} = require('../db.js')
 
 
 exports.get_measurements = async (req, res) => {
@@ -9,7 +15,7 @@ exports.get_measurements = async (req, res) => {
 
   try {
 
-    let query = `
+    const query = `
     import \"influxdata/influxdb/schema\"
     schema.measurements(bucket: \"${bucket}\")
     `
@@ -31,9 +37,30 @@ exports.get_measurements = async (req, res) => {
 
 exports.delete_measurement = async (req, res) => {
 
+  // Delete one measurement in the InfluxDB bucket
+
   try {
+
     const {measurement} = req.params
-    throw 'Not implemented'
+
+    const stop = new Date()
+    const start = new Date(0)
+
+    await deleteApi.postDelete({
+      org,
+      bucket,
+      body: {
+        start: start.toISOString(),
+        stop: stop.toISOString(),
+        predicate: `_measurement="${measurement}"`,
+      },
+    })
+
+
+    // Respond to client
+    res.send({measurement})
+
+    console.log(`Measurement ${measurement} deleted`)
   } catch (error) {
     error_handling(error,res)
   }
@@ -49,7 +76,7 @@ exports.read_points = async (req, res) => {
     // Filters
     // Using let because some variable types might change
     let {
-      start = '-2d',
+      start = '0',
       stop,
       tags = [],
       fields = [],
@@ -149,7 +176,5 @@ exports.create_points = async (req, res) => {
   } catch (error) {
     error_handling(error,res)
   }
-
-
 
 }

@@ -1,4 +1,5 @@
 const { InfluxDB } = require('@influxdata/influxdb-client')
+const { DeleteAPI } = require('@influxdata/influxdb-client-apis')
 const dotenv = require('dotenv')
 
 dotenv.config()
@@ -12,12 +13,41 @@ const {
 } = process.env
 
 
-const writeApi = new InfluxDB({url, token}).getWriteApi(org, bucket, precision)
-const queryApi = new InfluxDB({url, token}).getQueryApi(org)
+
+
+const influxDb = new InfluxDB({url, token})
+
+const writeApi = influxDb.getWriteApi(org, bucket, precision)
+const queryApi = influxDb.getQueryApi(org)
+const deleteApi = new DeleteAPI(influxDb)
+
+
+
+const influx_read = (query) => new Promise((resolve, reject) => {
+  // helper function for Influx queries
+
+  const results = []
+  queryApi.queryRows(query, {
+    next(row, tableMeta) {
+      // TODO: Find way to convert directly to an array
+      const result = tableMeta.toObject(row)
+      results.push(result)
+    },
+    error(error) {
+      reject(error)
+    },
+    complete() {
+      resolve(results)
+    },
+  })
+})
+
 
 exports.url = url
 exports.org = org
 exports.bucket = bucket
 exports.token = token
-exports.writeApi = writeApi
 exports.queryApi = queryApi
+exports.writeApi = writeApi
+exports.deleteApi = deleteApi
+exports.influx_read = influx_read
