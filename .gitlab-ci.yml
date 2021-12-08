@@ -1,21 +1,87 @@
 stages:
-  - containerization
+  - build
+  - test
+
+
 
 variables:
-  APPLICATION_NAME: influxdb-crud-rest-api
-  CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+  APPLICATION_NAME: influxdb-crud_rest-api
+  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_TEST: ${CONTAINER_IMAGE}:test
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
+  CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+  TEST_NETWORK: tdd
+  TEST_DB: tdd-db
+  TEST_DB_ORG: tdd
+  TEST_DB_BUCKET: tdd
+  TEST_DB_TOKEN: njK_dRkxL9fxJDnO5DbPs3nKmjC5h-4RKn8-Rk-GN2ByU-6ROurFBFuhBs66sZTE58U4wh9s78zCSZNWL9N7lg==
 
-containerization:
-  stage: containerization
+services:
+  - name: docker:19.03.12-dind
+    command: ["--insecure-registry=172.16.98.151:5000"]
+
+build-x86:
+  stage: build
+  only:
+    - master
   tags:
-    - "x86"
+    - dind
   script:
+    # - >
+    #  if [ -z ${DOCKER_HUB_USERNAME} ];
+    #  then echo "No Docker login" -;
+    #  else echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin ;
+    #  fi
+    - docker build -t ${CONTAINER_IMAGE_TEST} .
+    - docker push ${CONTAINER_IMAGE_TEST}
+    # Cleanup
+    - docker image rm ${CONTAINER_IMAGE_TEST}
+
+
+# Building application for X86 plattforms
+test:
+  stage: test
+  only:
+    - master
+  tags:
+    - dind
+  before_script:
+    # Creating network for TDD
+    - docker network create ${TEST_NETWORK}
+    # Creating DB container in network
     - >
-     if [ -z ${DOCKER_HUB_USERNAME} ];
-     then echo "No Docker login" -;
-     else echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin ;
-     fi
-    - docker build -t ${CONTAINER_IMAGE} .
+      docker run --rm -d
+      --name ${TEST_DB}
+      --network ${TEST_NETWORK}
+      --hostname ${TEST_DB}
+      --env DOCKER_INFLUXDB_INIT_MODE=setup
+      --env DOCKER_INFLUXDB_INIT_USERNAME=admin
+      --env DOCKER_INFLUXDB_INIT_PASSWORD=testDrivenDevelopment
+      --env DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${TEST_DB_TOKEN}
+      --env DOCKER_INFLUXDB_INIT_ORG={TEST_DB_ORG}
+      --env DOCKER_INFLUXDB_INIT_BUCKET={TEST_DB_BUCKET}
+      influxdb
+    - sleep(10)
+
+  script:
+    # Run test
+    - >
+      docker run
+      --rm
+      --name tdd-app
+      --network ${TEST_NETWORK}
+      --env INFLUXDB_URL=http://${TEST_DB}:8086
+      --env INFLUXDB_TOKEN=${TEST_DB_TOKEN}
+      --env INFLUXDB_ORG=${TEST_DB_ORG}
+      --env INFLUXDB_BUCKET=${TEST_DB_TOKEN}
+      ${CONTAINER_IMAGE_TEST}
+      npm run test
+    # Tag
+    - docker tag ${CONTAINER_IMAGE_TEST} ${CONTAINER_IMAGE}
+    - docker tag ${CONTAINER_IMAGE_TEST} ${CONTAINER_IMAGE_TAGGED}
+    # Push
     - docker push ${CONTAINER_IMAGE}
+    - docker push ${CONTAINER_IMAGE_TAGGED}
     # Cleanup
     - docker image rm ${CONTAINER_IMAGE}
+    - docker image rm ${CONTAINER_IMAGE_TAGGED}
