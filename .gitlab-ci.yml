@@ -55,13 +55,13 @@ test:
       --network ${TEST_NETWORK}
       --hostname ${TEST_DB}
       --env DOCKER_INFLUXDB_INIT_MODE=setup
-      --env DOCKER_INFLUXDB_INIT_USERNAME=admin
+      --env DOCKER_INFLUXDB_INIT_USERNAME=administrator
       --env DOCKER_INFLUXDB_INIT_PASSWORD=testDrivenDevelopment
       --env DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${TEST_DB_TOKEN}
-      --env DOCKER_INFLUXDB_INIT_ORG={TEST_DB_ORG}
-      --env DOCKER_INFLUXDB_INIT_BUCKET={TEST_DB_BUCKET}
+      --env DOCKER_INFLUXDB_INIT_ORG=${TEST_DB_ORG}
+      --env DOCKER_INFLUXDB_INIT_BUCKET=${TEST_DB_BUCKET}
       influxdb
-    - sleep 10
+    - sleep 60
 
   script:
     # Run test
