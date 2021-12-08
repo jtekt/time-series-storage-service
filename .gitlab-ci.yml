@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-
+image: moreillon/tdd-dind
 
 variables:
   APPLICATION_NAME: influxdb-crud_rest-api
