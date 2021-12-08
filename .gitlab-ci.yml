@@ -17,7 +17,7 @@ variables:
   TEST_DB_TOKEN: njK_dRkxL9fxJDnO5DbPs3nKmjC5h-4RKn8-Rk-GN2ByU-6ROurFBFuhBs66sZTE58U4wh9s78zCSZNWL9N7lg==
 
 services:
-  - name: moreillon/tdd-dind
+  - name: docker:19.03.12-dind
     command: ["--insecure-registry=172.16.98.151:5000"]
 
 build:
