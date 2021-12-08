@@ -20,4 +20,23 @@ describe("/measurements", () => {
     })
   })
 
+  describe("GET /", () => {
+    it("Should allow measurement query", async () => {
+      const {status} = await request(app)
+        .get("/measurements")
+
+      expect(status).to.equal(200)
+    })
+  })
+
+  describe("POST /measurements/:measurement", () => {
+    it("Should allow posting a point", async () => {
+      const {status} = await request(app)
+        .post("/measurements/tdd")
+        .send({temperature: 22.1})
+
+      expect(status).to.equal(200)
+    })
+  })
+
 })
