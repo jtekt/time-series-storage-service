@@ -27,7 +27,6 @@ build:
   tags:
     - dind
   script:
-    - aws --version
     # - >
     #  if [ -z ${DOCKER_HUB_USERNAME} ];
     #  then echo "No Docker login" -;
