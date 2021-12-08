@@ -73,7 +73,7 @@ test:
       --env INFLUXDB_URL=http://${TEST_DB}:8086
       --env INFLUXDB_TOKEN=${TEST_DB_TOKEN}
       --env INFLUXDB_ORG=${TEST_DB_ORG}
-      --env INFLUXDB_BUCKET=${TEST_DB_TOKEN}
+      --env INFLUXDB_BUCKET=${TEST_DB_BUCKET}
       ${CONTAINER_IMAGE_TEST}
       npm run test
     # Tag
