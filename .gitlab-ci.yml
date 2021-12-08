@@ -61,7 +61,7 @@ test:
       --env DOCKER_INFLUXDB_INIT_ORG=${TEST_DB_ORG}
       --env DOCKER_INFLUXDB_INIT_BUCKET=${TEST_DB_BUCKET}
       influxdb
-    - sleep 60
+    - sleep 10
 
   script:
     # Run test
