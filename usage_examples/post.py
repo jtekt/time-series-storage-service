@@ -4,7 +4,7 @@ import random
 
 
 
-measurement = 'python_example_2'
+measurement = 'sachiko_example'
 url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['tag1:v1', 'othertag2:v2']
 data = {

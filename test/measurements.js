@@ -41,10 +41,12 @@ describe("/measurements", () => {
 
   describe("GET /measurements/:measurement", () => {
     it("Should allow measurement query", async () => {
-      const {status} = await request(app)
+      const {status, body} = await request(app)
         .get("/measurements/tdd")
 
       expect(status).to.equal(200)
+      expect(body).to.have.lengthOf.above(0); // Not recommended
+
     })
   })
 

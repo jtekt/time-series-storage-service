@@ -164,14 +164,14 @@ exports.create_points = async (req, res) => {
       }
     }
 
-
     // write (flush is to actually perform the operation)
     writeApi.writePoint(point)
     await writeApi.flush()
 
-    // Respond
-    res.send('OK')
     console.log(`Point created in measurement ${measurement}`)
+
+    // Respond
+    res.send(point)
 
   } catch (error) {
     error_handling(error,res)
