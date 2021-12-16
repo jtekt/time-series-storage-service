@@ -20,7 +20,7 @@ describe("/measurements", () => {
     })
   })
 
-  describe("GET /", () => {
+  describe("GET /measurements", () => {
     it("Should allow measurement query", async () => {
       const {status} = await request(app)
         .get("/measurements")
@@ -33,6 +33,25 @@ describe("/measurements", () => {
     it("Should allow posting a point", async () => {
       const {status} = await request(app)
         .post("/measurements/tdd")
+        .send({temperature: 22.1})
+
+      expect(status).to.equal(200)
+    })
+  })
+
+  describe("GET /measurements/:measurement", () => {
+    it("Should allow measurement query", async () => {
+      const {status} = await request(app)
+        .get("/measurements/tdd")
+
+      expect(status).to.equal(200)
+    })
+  })
+
+  describe("DELETE /measurements/:measurement", () => {
+    it("Should allow deletign a measurement", async () => {
+      const {status} = await request(app)
+        .delete("/measurements/tdd")
         .send({temperature: 22.1})
 
       expect(status).to.equal(200)
