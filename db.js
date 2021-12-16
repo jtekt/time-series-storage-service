@@ -1,6 +1,12 @@
 const { InfluxDB } = require('@influxdata/influxdb-client')
 const { DeleteAPI } = require('@influxdata/influxdb-client-apis')
 const dotenv = require('dotenv')
+const {Agent} = require('http')
+
+const agent = new Agent({
+  keepAlive: true,
+  keepAliveMsecs: 20 * 1000, // 20 seconds keep alive
+})
 
 dotenv.config()
 
@@ -13,9 +19,11 @@ const {
 } = process.env
 
 
-
-
-const influxDb = new InfluxDB({url, token})
+const influxDb = new InfluxDB({
+  url, 
+  token,
+  transportOptions: {agent}
+})
 
 const writeApi = influxDb.getWriteApi(org, bucket, precision)
 const queryApi = influxDb.getQueryApi(org)

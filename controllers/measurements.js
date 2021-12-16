@@ -166,7 +166,7 @@ exports.create_points = async (req, res) => {
 
     // write (flush is to actually perform the operation)
     writeApi.writePoint(point)
-    await writeApi.flush()
+    const result = await writeApi.flush()
 
     console.log(`Point created in measurement ${measurement}`)
 
