@@ -75,7 +75,7 @@ test:
       --env INFLUXDB_ORG=${TEST_DB_ORG}
       --env INFLUXDB_BUCKET=${TEST_DB_BUCKET}
       ${CONTAINER_IMAGE_TEST}
-      npm run test
+      npm run coverage
     # Tag
     - docker tag ${CONTAINER_IMAGE_TEST} ${CONTAINER_IMAGE}
     - docker tag ${CONTAINER_IMAGE_TEST} ${CONTAINER_IMAGE_TAGGED}
