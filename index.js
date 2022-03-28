@@ -5,10 +5,7 @@ const auth = require('@moreillon/express_identification_middleware')
 const group_auth = require('@moreillon/express_group_based_authorization_middleware')
 const root_router = require('./routes/root.js')
 const measurements_router = require('./routes/measurements.js')
-const {
-  version,
-  author,
-} = require('./package.json')
+const { version, author } = require('./package.json')
 
 dotenv.config()
 

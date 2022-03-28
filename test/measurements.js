@@ -5,7 +5,7 @@ const {app} = require("../index.js")
 
 describe("/measurements", () => {
 
-  beforeEach( async () => {
+  before( async () => {
     // Silencing console
     console.log = () => {}
   })
@@ -45,7 +45,7 @@ describe("/measurements", () => {
         .get("/measurements/tdd")
 
       expect(status).to.equal(200)
-      expect(body).to.have.lengthOf.above(0); // Not recommended
+      expect(body).to.have.lengthOf.above(0)
 
     })
   })

@@ -5,7 +5,7 @@ stages:
 image: moreillon/tdd-dind
 
 variables:
-  APPLICATION_NAME: influxdb-crud_rest-api
+  APPLICATION_NAME: influxdb-crud-rest-api
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TEST: ${CONTAINER_IMAGE}:test
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}

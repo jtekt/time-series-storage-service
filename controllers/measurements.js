@@ -125,7 +125,6 @@ exports.read_points = async (req, res) => {
 exports.create_points = async (req, res) => {
 
   try {
-    //const writeApi = new InfluxDB({url, token}).getWriteApi(org, bucket, 'ns')
 
     // measurement name from query parameters
     const {measurement} = req.params
@@ -166,7 +165,7 @@ exports.create_points = async (req, res) => {
 
     // write (flush is to actually perform the operation)
     writeApi.writePoint(point)
-    const result = await writeApi.flush()
+    await writeApi.flush()
 
     console.log(`Point created in measurement ${measurement}`)
 
