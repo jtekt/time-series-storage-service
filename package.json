@@ -1,7 +1,7 @@
 {
   "name": "influxdb_crud_rest_api",
   "version": "1.0.4",
-  "description": "",
+  "description": "A simple application which allows the creation and query of data points in an InfluxDB 2.0 instance via a RESTful API.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 10000 --exit",
@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "Maxime MOREILLON",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.19.0",
     "@influxdata/influxdb-client-apis": "^1.21.0",
