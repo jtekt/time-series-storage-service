@@ -18,6 +18,7 @@ Additionally, it can be used with an external authentication API, making it conv
 | INFLUXDB_TOKEN  | The access token for the InfluxDB instance |
 | INFLUXDB_ORG  | The organization used in the InfluxDB instance |
 | INFLUXDB_BUCKET  | The name of the InfluxDB bucket |
+| INFLUXDB_BUCKET  | The name of the InfluxDB bucket |
 
 
 ## Usage examples (Python)
@@ -25,7 +26,7 @@ Additionally, it can be used with an external authentication API, making it conv
 ### Point creation
 ```python
 import requests
-measurement = 'environment_sensing'
+measurement = 'example'
 url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['building:main', 'room:lobby']
 data = {
@@ -39,7 +40,7 @@ requests.post(url, params=params, json=data)
 ### Points query
 ```python
 import requests
-measurement = 'environment_sensing'
+measurement = 'example'
 url = f'http://localhost:7070/measurements/{measurement}'
 requests.get(url)
 ```

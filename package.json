@@ -1,6 +1,6 @@
 {
   "name": "influxdb_crud_rest_api",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "A simple application which allows the creation and query of data points in an InfluxDB 2.0 instance via a RESTful API.",
   "main": "index.js",
   "scripts": {

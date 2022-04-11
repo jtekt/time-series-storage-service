@@ -4,7 +4,7 @@ import random
 
 
 
-measurement = 'sachiko_example'
+measurement = 'example'
 url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['tag1:v1', 'othertag2:v2']
 data = {
@@ -12,5 +12,6 @@ data = {
     'temperature': random.uniform(10, 40),
 }
 params = {'tags': tags}
+headers = { 'Authorization': 'Bearer YOUR TOKEN'}
 
-requests.post(url, params=params, json=data)
+requests.post(url, params=params, json=data, headers=headers)
