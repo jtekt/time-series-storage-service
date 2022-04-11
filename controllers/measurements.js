@@ -1,4 +1,3 @@
-const { error_handling } = require('../utils.js')
 const { Point } = require('@influxdata/influxdb-client')
 const {
   org,
@@ -9,7 +8,7 @@ const {
 } = require('../db.js')
 
 
-exports.get_measurements = async (req, res) => {
+exports.get_measurements = async (req, res, next) => {
 
   // List the available measurements in the InfluxDB Bucket
 
@@ -30,12 +29,13 @@ exports.get_measurements = async (req, res) => {
     res.send(measurements)
 
     console.log(`Measurements queried`)
-  } catch (error) {
-    error_handling(error,res)
+  }
+  catch (error) {
+    next(error,res)
   }
 }
 
-exports.delete_measurement = async (req, res) => {
+exports.delete_measurement = async (req, res, next) => {
 
   // Delete one measurement in the InfluxDB bucket
 
@@ -61,12 +61,13 @@ exports.delete_measurement = async (req, res) => {
     res.send({measurement})
 
     console.log(`Measurement ${measurement} deleted`)
-  } catch (error) {
-    error_handling(error,res)
+  }
+  catch (error) {
+    next(error,res)
   }
 }
 
-exports.read_points = async (req, res) => {
+exports.read_points = async (req, res, next) => {
 
   try {
     // measurement name from query parameters
@@ -117,12 +118,13 @@ exports.read_points = async (req, res) => {
     res.send(result)
 
     console.log(`Measurements of ${measurement} queried`)
-  } catch (error) {
-    error_handling(error,res)
+  }
+  catch (error) {
+    next(error,res)
   }
 }
 
-exports.create_points = async (req, res) => {
+exports.create_points = async (req, res, next) => {
 
   try {
 
@@ -172,8 +174,9 @@ exports.create_points = async (req, res) => {
     // Respond
     res.send(point)
 
-  } catch (error) {
-    error_handling(error,res)
+  }
+  catch (error) {
+    next(error,res)
   }
 
 }
