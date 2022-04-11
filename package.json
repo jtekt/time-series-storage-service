@@ -1,7 +1,7 @@
 {
-  "name": "influxdb_crud_rest_api",
+  "name": "time_series_storage_microservice",
   "version": "1.1.0",
-  "description": "A simple application which allows the creation and query of data points in an InfluxDB 2.0 instance via a RESTful API.",
+  "description": "A simple application which allows the storage and query of tiem series datasets in an InfluxDB 2.0 instance via a RESTful API.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 10000 --exit",

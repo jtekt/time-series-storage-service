@@ -1,6 +1,6 @@
-# InfluxDB CRUD REST API
+# Time series storage microservice
 
-This is a simple Node.js application which allows the creation and query of data points in an InfluxDB 2.0 instance via a RESTful API.
+This is a simple Node.js application which allows the storage and query of time series datasets in an InfluxDB 2.0 instance via a RESTful API.
 Additionally, it can be used with an external authentication API, making it convenient for applications where InfluxDB access credentials cannot be shared.
 
 ## API
