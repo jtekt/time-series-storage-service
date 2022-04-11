@@ -31,7 +31,7 @@ exports.get_measurements = async (req, res, next) => {
     console.log(`Measurements queried`)
   }
   catch (error) {
-    next(error,res)
+    next(error)
   }
 }
 
@@ -63,7 +63,7 @@ exports.delete_measurement = async (req, res, next) => {
     console.log(`Measurement ${measurement} deleted`)
   }
   catch (error) {
-    next(error,res)
+    next(error)
   }
 }
 
@@ -176,7 +176,7 @@ exports.create_points = async (req, res, next) => {
 
   }
   catch (error) {
-    next(error,res)
+    next(error)
   }
 
 }
