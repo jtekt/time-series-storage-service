@@ -1,5 +1,7 @@
 # InfluxDB CRUD REST API
 
+This is a simple Node.js application which allows the creation and query of data points in an InfluxDB 2.0 instance via a RESTful API.
+Additionally, it can be used with an external authentication API, making it convenient for applications where InfluxDB access credentials cannot be shared.
 
 ## API
 | Route  | Method | Description |
@@ -18,20 +20,11 @@
 | INFLUXDB_BUCKET  | The name of the InfluxDB bucket |
 
 
-## Usage examples
+## Usage examples (Python)
 
-### Query using time filter
-```
-GET /measurements/python_example?start=2021-11-03&stop=2021-11-05
-```
-
-### Query using tag filter
-```
-GET measurements/python_example?tags=fruit:banana&tags=area:tokyo
-```
-
-### Point registration (Python)
+### Point creation
 ```python
+import requests
 measurement = 'environment_sensing'
 url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['building:main', 'room:lobby']
@@ -41,4 +34,12 @@ data = {
 }
 params = {'tags': tags}
 requests.post(url, params=params, json=data)
+```
+
+### Points query
+```python
+import requests
+measurement = 'environment_sensing'
+url = f'http://localhost:7070/measurements/{measurement}'
+requests.get(url)
 ```
