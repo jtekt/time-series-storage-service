@@ -120,7 +120,7 @@ exports.read_points = async (req, res, next) => {
     console.log(`Measurements of ${measurement} queried`)
   }
   catch (error) {
-    next(error,res)
+    next(error)
   }
 }
 
