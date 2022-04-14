@@ -9,7 +9,7 @@ const { version, author } = require('./package.json')
 
 dotenv.config()
 
-console.log(`InfluxDB CRUD REST API v${version}`);
+console.log(`Time series storage service v${version}`);
 
 const {
   APP_PORT = 80,
