@@ -18,7 +18,6 @@ Additionally, it can be used with an external authentication API, making it conv
 | INFLUXDB_TOKEN  | The access token for the InfluxDB instance |
 | INFLUXDB_ORG  | The organization used in the InfluxDB instance |
 | INFLUXDB_BUCKET  | The name of the InfluxDB bucket |
-| INFLUXDB_BUCKET  | The name of the InfluxDB bucket |
 
 
 ## Usage examples (Python)
