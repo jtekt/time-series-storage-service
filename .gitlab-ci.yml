@@ -41,6 +41,7 @@ build:
 # Building application for X86 plattforms
 test:
   stage: test
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   only:
     - master
   tags:
