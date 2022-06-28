@@ -17,4 +17,9 @@ router.route('/:measurement')
   .post(create_points)
   .delete(delete_measurement)
 
+// aliases
+router.route('/:measurement/points')
+  .get(read_points)
+  .post(create_points)
+
 module.exports = router

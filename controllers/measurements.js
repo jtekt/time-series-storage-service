@@ -135,55 +135,63 @@ exports.read_points = async (req, res, next) => {
   }
 }
 
+
+const create_single_point = ({data, tags, measurement}) => {
+  // Not using const because fo tagging hereunder
+  let point = new Point(measurement)
+
+  // Add tags
+  tags.forEach(tag => {
+    const tag_split = tag.split(':')
+    point = point.tag(tag_split[0], tag_split[1])
+  })
+
+  // Deal with values
+  for (const field in data) {
+    const value = data[field]
+
+    if (field === 'time') {
+      // Add time if provided
+      point.timestamp(new Date(value))
+    }
+    else if ((typeof value) === 'number') {
+      // float value
+      point.floatField(field, parseFloat(value))
+    }
+    else {
+      // String value
+      point.stringField(field, value)
+    }
+  }
+
+  // write (flush hereunder is to actually perform the operation)
+  writeApi.writePoint(point)
+}
+
+
 exports.create_points = async (req, res, next) => {
 
   try {
 
     // measurement name from query parameters
-    const {measurement} = req.params
+    const { measurement } = req.params
+    const { body } = req
 
-    const data = req.body
-
+    const points = Array.isArray(req.body) ? body : [body]
 
     // Tags from request query string
     let tags = req.query.tags || []
     if(typeof tags === 'string') tags = [tags]
 
-    // Create point
-    let point = new Point(measurement)
 
-    // Add tags
-    tags.forEach(tag => {
-      const tag_split = tag.split(':')
-      point = point.tag(tag_split[0],tag_split[1])
-    })
+    points.forEach( data => create_single_point({data, tags, measurement}) )
 
-    // Deal with values
-    for (const field in data) {
-      const value = data[field]
-
-      if(field === 'time'){
-        // Add time if provided
-        point.timestamp(new Date(value))
-      }
-      else if( (typeof value) === 'number') {
-        // float value
-        point.floatField(field, parseFloat(value))
-      }
-      else {
-        // String value
-        point.stringField(field, value)
-      }
-    }
-
-    // write (flush is to actually perform the operation)
-    writeApi.writePoint(point)
     await writeApi.flush()
 
-    console.log(`Point created in measurement ${measurement}`)
+    console.log(`${points.length} point(s) created in measurement ${measurement}`)
 
     // Respond
-    res.send(point)
+    res.send(points)
 
   }
   catch (error) {
