@@ -164,8 +164,9 @@ const create_single_point = ({data, tags, measurement}) => {
     }
   }
 
-  // write (flush hereunder is to actually perform the operation)
-  writeApi.writePoint(point)
+  return point
+
+  
 }
 
 
@@ -177,14 +178,16 @@ exports.create_points = async (req, res, next) => {
     const { measurement } = req.params
     const { body } = req
 
-    const points = Array.isArray(req.body) ? body : [body]
+    const items = Array.isArray(req.body) ? body : [body]
 
     // Tags from request query string
     let tags = req.query.tags || []
     if(typeof tags === 'string') tags = [tags]
 
+    const points = items.map(data => create_single_point({ data, tags, measurement }) )
 
-    points.forEach( data => create_single_point({data, tags, measurement}) )
+    // write (flush hereunder is to actually perform the operation)
+    writeApi.writePoints(points)
 
     await writeApi.flush()
 
