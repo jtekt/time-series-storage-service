@@ -4,7 +4,7 @@ import random
 
 
 
-measurement = 'example'
+measurement = 'example4'
 url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['tag1:v1', 'othertag2:v2']
 

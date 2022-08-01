@@ -137,16 +137,9 @@ exports.read_points = async (req, res, next) => {
 
 
 const create_single_point = ({data, tags, measurement}) => {
-  // Not using const because fo tagging hereunder
-  let point = new Point(measurement)
 
-  // Add tags
-  tags.forEach(tag => {
-    const tag_split = tag.split(':')
-    point = point.tag(tag_split[0], tag_split[1])
-  })
+  const point = new Point(measurement)
 
-  // Deal with values
   for (const field in data) {
     const value = data[field]
 
@@ -177,13 +170,19 @@ exports.create_points = async (req, res, next) => {
     // measurement name from query parameters
     const { measurement } = req.params
     const { body } = req
+    let { tags = [] } = req.query
 
     const items = Array.isArray(req.body) ? body : [body]
 
     // Tags from request query string
-    let tags = req.query.tags || []
+    // Forgot what this is for
     if(typeof tags === 'string') tags = [tags]
 
+    // Add tags
+    const default_tags = tags.reduce((prev, tag) => ({ ...prev, [tag.split(':')[0]]: tag.split(':')[1] }), {})
+    writeApi.useDefaultTags(default_tags)
+
+    // Make list of points
     const points = items.map(data => create_single_point({ data, tags, measurement }) )
 
     // write (flush hereunder is to actually perform the operation)
