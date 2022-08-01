@@ -1,11 +1,15 @@
-const { Point } = require('@influxdata/influxdb-client')
 const {
   org,
   bucket,
   writeApi,
   influx_read,
   deleteApi
-} = require('../db.js')
+} = require('../db')
+
+const {
+  parse_csv_points,
+  create_single_point
+} = require('../utils')
 
 
 exports.get_measurements = async (req, res, next) => {
@@ -136,43 +140,23 @@ exports.read_points = async (req, res, next) => {
 }
 
 
-const create_single_point = ({data, tags, measurement}) => {
-
-  const point = new Point(measurement)
-
-  for (const field in data) {
-    const value = data[field]
-
-    if (field === 'time') {
-      // Add time if provided
-      point.timestamp(new Date(value))
-    }
-    else if ((typeof value) === 'number') {
-      // float value
-      point.floatField(field, parseFloat(value))
-    }
-    else {
-      // String value
-      point.stringField(field, value)
-    }
-  }
-
-  return point
-
-  
-}
 
 
 exports.create_points = async (req, res, next) => {
 
   try {
 
+
     // measurement name from query parameters
     const { measurement } = req.params
     const { body } = req
     let { tags = [] } = req.query
 
-    const items = Array.isArray(req.body) ? body : [body]
+    let items
+    if (req.headers['content-type'] === 'text/csv') items = parse_csv_points(body)
+    else if (Array.isArray(req.body) ) items = body
+    else items = [body]
+
 
     // Tags from request query string
     // Forgot what this is for

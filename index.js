@@ -20,6 +20,7 @@ const {
 
 const app = express()
 app.use(express.json({ limit: '50mb' }))
+app.use(express.text({ type: 'text/*', limit: '50mb'}))
 app.use(cors())
 
 app.use('/', root_router)
