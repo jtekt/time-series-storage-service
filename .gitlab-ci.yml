@@ -3,9 +3,12 @@ stages:
   - test
 
 image: moreillon/tdd-dind
+services:
+  - name: docker:19.03.12-dind
+    command: ["--insecure-registry=172.16.98.151:5000"]
 
 variables:
-  APPLICATION_NAME: influxdb-crud-rest-api
+  APPLICATION_NAME: time-series-storage
 
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TEST: ${CONTAINER_IMAGE}:test
@@ -19,9 +22,7 @@ variables:
   TEST_DB_BUCKET: tdd
   TEST_DB_TOKEN: njK_dRkxL9fxJDnO5DbPs3nKmjC5h-4RKn8-Rk-GN2ByU-6ROurFBFuhBs66sZTE58U4wh9s78zCSZNWL9N7lg==
 
-services:
-  - name: docker:19.03.12-dind
-    command: ["--insecure-registry=172.16.98.151:5000"]
+
 
 build:
   stage: build
