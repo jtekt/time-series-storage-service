@@ -71,73 +71,7 @@ exports.delete_measurement = async (req, res, next) => {
   }
 }
 
-exports.read_points = async (req, res, next) => {
 
-  try {
-    // measurement name from query parameters
-
-    const {measurement} = req.params
-
-    // Filters
-    // Using let because some variable types might change
-    let {
-      start = '0', // by default, query all points
-      stop,
-      tags = [],
-      fields = [],
-      limit = 500, // Limit point count by default, note: this is approximative
-    } = req.query
-
-    const stop_query = stop ? (`stop: ${stop}`) : ''
-
-
-    // If only one tag provided, will be parsed as string so put it in an array
-    if(typeof tags === 'string') tags = [tags]
-    if(typeof fields === 'string') fields = [fields]
-
-    // NOTE: check for risks of injection
-    let query = `
-      from(bucket:"${bucket}")
-      |> range(start: ${start}, ${stop_query})
-      |> filter(fn: (r) => r._measurement == "${measurement}")
-    `
-
-    //Adding fields to filter if provided in the query
-    if(fields.length){
-      const fields_joined = fields.map( f => `r["_field"] == "${f}"`).join(' or ')
-      query += `|> filter(fn: (r) => ${fields_joined})`
-    }
-
-    //Adding tags to filter if provided in the query
-    tags.forEach(tag => {
-      const tag_split = tag.split(':')
-      query += `
-      |> filter(fn: (r) => r["${tag_split[0]}"] == "${tag_split[1]}")
-      `
-    })
-
-    // subsampling
-    // Getting point count to compute the sampling from the limit
-    const count_query = query + `|> count()`
-    const record_count_query_result = await influx_read(count_query)
-    const record_count = record_count_query_result[0]._value // Dirty here
-    const sampling = Math.max(Math.round(12 * record_count / (limit)), 1 ) // Not sure why 12
-
-    // Apply subsampling
-    query += `|> sample(n:${sampling})`
-
-    // Run the query
-    const points = await influx_read(query)
-
-    // Respond to client
-    res.send(points)
-
-    console.log(`Measurements of ${measurement} queried`)
-  }
-  catch (error) {
-    next(error)
-  }
-}
 
 
 
@@ -184,4 +118,128 @@ exports.create_points = async (req, res, next) => {
     next(error)
   }
 
+}
+
+
+exports.read_points = async (req, res, next) => {
+
+  try {
+    // measurement name from query parameters
+
+    const { measurement } = req.params
+
+    // Filters
+    // Using let because some variable types might change
+    let {
+      start = '0', // by default, query all points
+      stop,
+      tags = [],
+      fields = [],
+      limit = 500, // Limit point count by default, note: this is approximative
+    } = req.query
+
+    const stop_query = stop ? (`stop: ${stop}`) : ''
+
+
+    // If only one tag provided, will be parsed as string so put it in an array
+    if (typeof tags === 'string') tags = [tags]
+    if (typeof fields === 'string') fields = [fields]
+
+    // NOTE: check for risks of injection
+    let query = `
+      from(bucket:"${bucket}")
+      |> range(start: ${start}, ${stop_query})
+      |> filter(fn: (r) => r._measurement == "${measurement}")
+    `
+
+    //Adding fields to filter if provided in the query
+    if (fields.length) {
+      const fields_joined = fields.map(f => `r["_field"] == "${f}"`).join(' or ')
+      query += `|> filter(fn: (r) => ${fields_joined})`
+    }
+
+    //Adding tags to filter if provided in the query
+    tags.forEach(tag => {
+      const tag_split = tag.split(':')
+      query += `
+      |> filter(fn: (r) => r["${tag_split[0]}"] == "${tag_split[1]}")
+      `
+    })
+
+    // subsampling
+    // Getting point count to compute the sampling from the limit
+    const count_query = query + `|> count()`
+    const record_count_query_result = await influx_read(count_query)
+    const record_count = record_count_query_result[0]._value // Dirty here
+    const sampling = Math.max(Math.round(12 * record_count / (limit)), 1) // Not sure why 12
+
+    // Apply subsampling
+    query += `|> sample(n:${sampling})`
+
+    // Run the query
+    const points = await influx_read(query)
+
+    // Respond to client
+    res.send(points)
+
+    console.log(`Measurements of ${measurement} queried`)
+  }
+  catch (error) {
+    next(error)
+  }
+}
+
+exports.read_latest_point = async (req, res, next) => {
+
+  try {
+
+    const { measurement } = req.params
+
+    // Filters
+    // Using let because some variable types might change
+    let {
+      tags = [],
+      fields = [],
+    } = req.query
+
+
+    // If only one tag provided, will be parsed as string so put it in an array
+    if (typeof tags === 'string') tags = [tags]
+    if (typeof fields === 'string') fields = [fields]
+
+    // NOTE: check for risks of injection
+    let query = `
+      from(bucket:"${bucket}")
+      |> range(start: 0)
+      |> filter(fn: (r) => r._measurement == "${measurement}")
+    `
+
+    //Adding fields to filter if provided in the query
+    if (fields.length) {
+      const fields_joined = fields.map(f => `r["_field"] == "${f}"`).join(' or ')
+      query += `|> filter(fn: (r) => ${fields_joined})`
+    }
+
+    //Adding tags to filter if provided in the query
+    tags.forEach(tag => {
+      const tag_split = tag.split(':')
+      query += `
+      |> filter(fn: (r) => r["${tag_split[0]}"] == "${tag_split[1]}")
+      `
+    })
+
+    query += `|> last()`
+
+
+    // Run the query
+    const points = await influx_read(query)
+
+    // Respond to client
+    res.send(points[0])
+
+    console.log(`Measurements of ${measurement} queried`)
+  }
+  catch (error) {
+    next(error)
+  }
 }

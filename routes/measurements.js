@@ -2,8 +2,9 @@ const {Router} = require('express')
 const {
   get_measurements,
   delete_measurement,
-  read_points,
   create_points,
+  read_points,
+  read_latest_point
 } = require('../controllers/measurements.js')
 
 
@@ -21,5 +22,8 @@ router.route('/:measurement')
 router.route('/:measurement/points')
   .get(read_points)
   .post(create_points)
+
+router.route('/:measurement/points/latest')
+  .get(read_latest_point)
 
 module.exports = router
