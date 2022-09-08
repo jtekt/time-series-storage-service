@@ -87,9 +87,18 @@ exports.create_points = async (req, res, next) => {
     let { tags = [] } = req.query
 
     let items
-    if (req.headers['content-type'] === 'text/csv') items = parse_csv_points(body)
-    else if (Array.isArray(req.body) ) items = body
-    else items = [body]
+    if (req.headers['content-type'] === 'text/csv') {
+      items = parse_csv_points(body)
+      console.log(`Body contains ${items.length} points in CSV format`)
+    }
+    else if (Array.isArray(req.body) ) {
+      items = body
+      console.log(`Body contains ${items.length} points JSON format`)
+    }
+    else {
+      items = [body]
+      console.log(`Body contains a single point in JSON format`)
+    }
 
 
     // Tags from request query string
