@@ -5,14 +5,14 @@ import random
 
 
 measurement = 'dev3'
-url = f'http://172.16.106.29:30886/measurements/{measurement}'
+url = f'http://localhost:7070/measurements/{measurement}'
 tags = ['tag1:v1', 'othertag2:v2']
 data = {
     'humidity': random.uniform(10, 100),
-    # 'temperature': random.uniform(10, 40),
+    'temperature': random.uniform(10, 40),
 }
 params = {'tags': tags}
 headers = { 'Authorization': 'Bearer YOUR TOKEN'}
 
 result = requests.post(url, params=params, json=data, headers=headers)
-print(result)
+print(result.text)

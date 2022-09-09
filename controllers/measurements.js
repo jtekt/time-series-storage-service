@@ -194,7 +194,7 @@ exports.read_points = async (req, res, next) => {
     // Respond to client
     res.send(points)
 
-    console.log(`Measurements of ${measurement} queried`)
+    console.log(`Points of measurement ${measurement} queried`)
   }
   catch (error) {
     next(error)
