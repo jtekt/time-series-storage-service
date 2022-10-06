@@ -40,7 +40,6 @@ build:
     - docker push ${CONTAINER_IMAGE_TEST}
 
 
-# Building application for X86 plattforms
 test:
   stage: test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
@@ -49,7 +48,8 @@ test:
   tags:
     - dind
   before_script:
-    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    # Registry login
+    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
     # Creating network for TDD
     - docker network create ${TEST_NETWORK}
     # Creating DB container in network

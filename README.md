@@ -43,3 +43,8 @@ measurement = 'example'
 url = f'http://localhost:7070/measurements/{measurement}'
 requests.get(url)
 ```
+
+
+## Contaimer images
+
+Container images are available on the [AWS ECR Public Gallery](https://gallery.ecr.aws/u6l4m3e5/time-series-storage-service)
