@@ -259,24 +259,22 @@ exports.read_latest_point = async (req, res, next) => {
   }
 }
 
-exports.delete_point = async (req, res, next) => {
+exports.delete_points = async (req, res, next) => {
   
 
   try {
 
-    const { measurement, time } = req.params
+    const { measurement } = req.params
+    const { start, stop } = req.query
 
     // THIS IS NOT WORKING YET
-
-    const stop = new Date(time)
-    const start = new Date(time)
 
     await deleteApi.postDelete({
       org,
       bucket,
       body: {
-        start: start.toISOString(),
-        stop: stop.toISOString(),
+        start: new Date(start).toISOString(),
+        stop: new Date(stop).toISOString(),
         predicate: `_measurement="${measurement}"`,
       },
     })
