@@ -40,24 +40,25 @@ exports.get_measurements = async (req, res, next) => {
   }
 }
 
-exports.delete_measurement = async (req, res, next) => {
+exports.delete_points = async (req, res, next) => {
 
-  // Delete one whole measurement in the InfluxDB bucket
-  // This is achieved by deleting all points
+  // Deleting the whole measurement is achieved by deleting all points
 
   try {
 
     const {measurement} = req.params
+    const { 
+      start = new Date(0), 
+      stop = new Date()
+    } = req.query
 
-    const stop = new Date()
-    const start = new Date(0)
 
     await deleteApi.postDelete({
       org,
       bucket,
       body: {
-        start: start.toISOString(),
-        stop: stop.toISOString(),
+        start,
+        stop,
         predicate: `_measurement="${measurement}"`,
       },
     })
@@ -66,7 +67,7 @@ exports.delete_measurement = async (req, res, next) => {
     // Respond to client
     res.send({measurement})
 
-    console.log(`Measurement ${measurement} deleted`)
+    console.log(`Points from ${start} to ${stop} of measurement ${measurement} deleted`)
   }
   catch (error) {
     next(error)
@@ -257,34 +258,4 @@ exports.read_latest_point = async (req, res, next) => {
   catch (error) {
     next(error)
   }
-}
-
-exports.delete_points = async (req, res, next) => {
-  
-
-  try {
-
-    const { measurement} = req.params
-    const { start, stop } = req.query
-
-    await deleteApi.postDelete({
-      org,
-      bucket,
-      body: {
-        start,
-        stop,
-        predicate: `_measurement="${measurement}"`,
-      },
-    })
-
-
-    // Respond to client
-    res.send({ measurement, start, stop })
-
-    console.log(`Points from ${start} to ${stop} of measurement ${measurement} deleted`)
-  }
-  catch (error) {
-    next(error)
-  }
-  
 }

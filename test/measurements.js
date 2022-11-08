@@ -55,26 +55,6 @@ describe("/measurements", () => {
     })
   })
 
-  describe("DELETE /measurements/:measurement/points", () => {
-    it("Should allow deleting a point", async () => {
-      const { status } = await request(app)
-        .delete(`/measurements/tdd/points?start=${point_time}&stop=${point_time}`)
-
-      expect(status).to.equal(200)
-    })
-  })
-
-  describe("GET /measurements/:measurement", () => {
-    it("Measurement length should be 0 after single point deletion", async () => {
-      const { status, body } = await request(app)
-        .get("/measurements/tdd")
-
-
-      expect(status).to.equal(200)
-      expect(body).to.have.lengthOf(0)
-    })
-  })
-
   describe("DELETE /measurements/:measurement", () => {
     it("Should allow deleting a whole measurement", async () => {
       const {status} = await request(app)

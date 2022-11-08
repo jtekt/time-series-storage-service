@@ -1,11 +1,10 @@
 const {Router} = require('express')
 const {
   get_measurements,
-  delete_measurement,
+  delete_points,
   create_points,
   read_points,
   read_latest_point,
-  delete_points
 } = require('../controllers/measurements.js')
 
 
@@ -17,7 +16,7 @@ router.route('/')
 router.route('/:measurement')
   .get(read_points)
   .post(create_points)
-  .delete(delete_measurement)
+  .delete(delete_points)
 
 // aliases
 router.route('/:measurement/points')
