@@ -1,6 +1,6 @@
 import requests
 
-MEASUREMENT = 'python_example_2'
+MEASUREMENT = 'dev3'
 
 url = f'http://localhost:7070/measurements/{MEASUREMENT}'
 
