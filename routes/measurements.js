@@ -4,7 +4,8 @@ const {
   delete_measurement,
   create_points,
   read_points,
-  read_latest_point
+  read_latest_point,
+  delete_points
 } = require('../controllers/measurements.js')
 
 
@@ -22,6 +23,9 @@ router.route('/:measurement')
 router.route('/:measurement/points')
   .get(read_points)
   .post(create_points)
+  .delete(delete_points)
+
+
 
 router.route('/:measurement/points/latest')
   .get(read_latest_point)

@@ -1,3 +1,4 @@
+const createHttpError = require('http-errors')
 const {
   org,
   bucket,
@@ -42,6 +43,7 @@ exports.get_measurements = async (req, res, next) => {
 exports.delete_measurement = async (req, res, next) => {
 
   // Delete one measurement in the InfluxDB bucket
+  // This is achieved by deleting all points
 
   try {
 
@@ -134,7 +136,6 @@ exports.read_points = async (req, res, next) => {
 
   try {
     // measurement name from query parameters
-
     const { measurement } = req.params
 
     // Filters
@@ -203,6 +204,8 @@ exports.read_points = async (req, res, next) => {
 
 exports.read_latest_point = async (req, res, next) => {
 
+  // TODO: make functions out of code redundant with above
+
   try {
 
     const { measurement } = req.params
@@ -249,9 +252,41 @@ exports.read_latest_point = async (req, res, next) => {
     // Respond to client
     res.send(points[0])
 
-    console.log(`Measurements of ${measurement} queried`)
+    console.log(`Latest point of measurement ${measurement} queried`)
   }
   catch (error) {
     next(error)
   }
+}
+
+exports.delete_points = async (req, res, next) => {
+  
+
+  try {
+
+    const { measurement } = req.params
+    const { start, stop } = req.query
+
+    // THIS IS NOT WORKING YET
+
+    await deleteApi.postDelete({
+      org,
+      bucket,
+      body: {
+        start: new Date(start).toISOString(),
+        stop: new Date(stop).toISOString(),
+        predicate: `_measurement="${measurement}"`,
+      },
+    })
+
+
+    // Respond to client
+    res.send({ measurement })
+
+    console.log(`Measurement ${measurement} deleted`)
+  }
+  catch (error) {
+    next(error)
+  }
+  
 }
