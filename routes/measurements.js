@@ -26,7 +26,6 @@ router.route('/:measurement/points')
   .delete(delete_points)
 
 
-
 router.route('/:measurement/points/latest')
   .get(read_latest_point)
 
