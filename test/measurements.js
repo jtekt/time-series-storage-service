@@ -10,6 +10,8 @@ describe("/measurements", () => {
     console.log = () => {}
   })
 
+  let point_time
+
 
   describe("GET /", () => {
     it("Should return root", async () => {
@@ -43,6 +45,9 @@ describe("/measurements", () => {
     it("Should allow measurement query", async () => {
       const {status, body} = await request(app)
         .get("/measurements/tdd")
+      
+      point_time = body[0]._time
+
 
       expect(status).to.equal(200)
       expect(body).to.have.lengthOf.above(0)
@@ -50,11 +55,30 @@ describe("/measurements", () => {
     })
   })
 
+  describe("DELETE /measurements/:measurement/points", () => {
+    it("Should allow deleting a point", async () => {
+      const { status } = await request(app)
+        .delete(`/measurements/tdd/points?start=${point_time}&stop=${point_time}`)
+
+      expect(status).to.equal(200)
+    })
+  })
+
+  describe("GET /measurements/:measurement", () => {
+    it("Measurement length should be 0 after single point deletion", async () => {
+      const { status, body } = await request(app)
+        .get("/measurements/tdd")
+
+
+      expect(status).to.equal(200)
+      expect(body).to.have.lengthOf(0)
+    })
+  })
+
   describe("DELETE /measurements/:measurement", () => {
-    it("Should allow deletign a measurement", async () => {
+    it("Should allow deleting a whole measurement", async () => {
       const {status} = await request(app)
         .delete("/measurements/tdd")
-        .send({temperature: 22.1})
 
       expect(status).to.equal(200)
     })
