@@ -55,6 +55,15 @@ describe("/measurements", () => {
     })
   })
 
+  describe("GET /measurements/:measurement/points/latest", () => {
+    it("Should allow measurement query", async () => {
+      const { status, body } = await request(app)
+        .get("/measurements/tdd/points/latest")
+
+      expect(status).to.equal(200)
+    })
+  })
+
   describe("DELETE /measurements/:measurement", () => {
     it("Should allow deleting a whole measurement", async () => {
       const {status} = await request(app)
