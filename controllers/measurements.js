@@ -205,7 +205,7 @@ exports.read_points = async (req, res, next) => {
 
 exports.read_latest_point = async (req, res, next) => {
 
-  // TODO: make functions out of code redundant with above
+  // Try to use query instead of params and combine with GET /measurements/:measurement
 
   try {
 
