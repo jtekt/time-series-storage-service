@@ -21,17 +21,19 @@ exports.create_single_point = ({ data, tags, measurement }) => {
 
     const point = new Point(measurement)
 
+
     for (const field in data) {
         const value = data[field]
-        
-        if(isNaN(value));
-        else if (field === 'time') {
+
+        if (field === 'time') {
             // Add time if provided
             point.timestamp(new Date(value))
         }
-        else if ((typeof value) === 'number') {
-            // float value
-            point.floatField(field, parseFloat(value))
+        else if ((typeof value) === 'number' ) {
+            if(!isNaN(value)){
+                // float value
+                point.floatField(field, parseFloat(value))
+            }
         }
         else {
             // String value
