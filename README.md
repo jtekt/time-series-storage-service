@@ -47,4 +47,4 @@ requests.get(url)
 
 ## Container images
 
-Container images are available on the [AWS ECR Public Gallery](https://gallery.ecr.aws/u6l4m3e5/time-series-storage-service)
+Container images are available on the [AWS ECR Public Gallery](https://gallery.ecr.aws/jtekt-corporation/time-series-storage-service)
