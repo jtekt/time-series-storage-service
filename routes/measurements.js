@@ -1,31 +1,29 @@
-const {Router} = require('express')
+const { Router } = require("express")
+const { get_measurements } = require("../controllers/measurements.js")
 const {
-  get_measurements,
   delete_points,
   create_points,
   read_points,
   read_latest_point,
-} = require('../controllers/measurements.js')
-
+} = require("../controllers/points.js")
 
 const router = Router()
 
-router.route('/')
-  .get(get_measurements)
+router.route("/").get(get_measurements)
 
-router.route('/:measurement')
+router
+  .route("/:measurement")
   .get(read_points)
   .post(create_points)
   .delete(delete_points)
 
 // aliases
-router.route('/:measurement/points')
+router
+  .route("/:measurement/points")
   .get(read_points)
   .post(create_points)
   .delete(delete_points)
 
-
-router.route('/:measurement/points/latest')
-  .get(read_latest_point)
+router.route("/:measurement/points/latest").get(read_latest_point)
 
 module.exports = router

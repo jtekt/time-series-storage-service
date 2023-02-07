@@ -1,9 +1,10 @@
 {
   "name": "time_series_storage_microservice",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "A simple application which allows the storage and query of tiem series datasets in an InfluxDB 2.0 instance via a RESTful API.",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon",
     "test": "mocha --timeout 10000 --exit",
     "coverage": "nyc mocha --timeout 15000 --exit"
   },
