@@ -1,9 +1,9 @@
-const createHttpError = require("http-errors")
-const { org, bucket, writeApi, influx_read, deleteApi } = require("../db")
+import createHttpError from "http-errors"
+import { org, bucket, writeApi, influx_read, deleteApi } from "../db"
+import { parse_csv_points, create_single_point } from "../utils"
+import { Request, Response, NextFunction } from "express"
 
-const { parse_csv_points, create_single_point } = require("../utils")
-
-const fieldsFilter = (fields) => {
+const fieldsFilter = (fields: string[]) => {
   let query = ""
 
   const fieldArray = typeof fields === "string" ? [fields] : fields
@@ -18,7 +18,7 @@ const fieldsFilter = (fields) => {
   return query
 }
 
-const tagsFilter = (tags) => {
+const tagsFilter = (tags: string[]) => {
   let query = ""
   const tagArray = typeof tags === "string" ? [tags] : tags
   tagArray.forEach((tag) => {
@@ -28,7 +28,11 @@ const tagsFilter = (tags) => {
   return query
 }
 
-exports.read_points = async (req, res, next) => {
+export const read_points = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     // measurement name from query parameters
     const { measurement } = req.params
@@ -43,7 +47,7 @@ exports.read_points = async (req, res, next) => {
       // Limit point count via sampling.
       // Note: This is per field so response will be field count x limit,
       limit = 500,
-    } = req.query
+    } = req.query as any // TODO: find type
 
     const stop_query = stop ? `stop: ${stop}` : ""
 
@@ -60,7 +64,7 @@ exports.read_points = async (req, res, next) => {
     // Getting point count to compute the sampling from the limit
     // Note: This is per field so response will be field count x limit,
     const count_query = query + `|> count()`
-    const record_count_query_result = await influx_read(count_query)
+    const record_count_query_result: any = await influx_read(count_query)
     const record_count = record_count_query_result[0]?._value // Dirty here
     if (record_count) {
       const sampling = Math.max(Math.round(record_count / Number(limit)), 1)
@@ -79,13 +83,17 @@ exports.read_points = async (req, res, next) => {
   }
 }
 
-exports.read_latest_point = async (req, res, next) => {
+export const read_latest_point = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { measurement } = req.params
 
     // Filters
     // Using let because some variable types might change
-    let { tags = [], fields = [] } = req.query
+    let { tags = [], fields = [] } = req.query as any
 
     // NOTE: check for risks of injection
     let query = `
@@ -98,7 +106,7 @@ exports.read_latest_point = async (req, res, next) => {
     `
 
     // Run the query
-    const points = await influx_read(query)
+    const points: any = await influx_read(query)
     console.log(`Latest point of measurement ${measurement} queried`)
 
     // Respond to client
@@ -108,12 +116,16 @@ exports.read_latest_point = async (req, res, next) => {
   }
 }
 
-exports.create_points = async (req, res, next) => {
+export const create_points = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     // measurement name from query parameters
     const { measurement } = req.params
     const { body } = req
-    let { tags = [] } = req.query
+    let { tags = [] } = req.query as any
 
     let items
     if (req.headers["content-type"] === "text/csv") {
@@ -133,14 +145,17 @@ exports.create_points = async (req, res, next) => {
 
     // Add tags
     const default_tags = tags.reduce(
-      (prev, tag) => ({ ...prev, [tag.split(":")[0]]: tag.split(":")[1] }),
+      (prev: any, tag: string) => ({
+        ...prev,
+        [tag.split(":")[0]]: tag.split(":")[1],
+      }),
       {}
     )
     writeApi.useDefaultTags(default_tags)
 
     // Make list of points
-    const points = items.map((data) =>
-      create_single_point({ data, tags, measurement })
+    const points = items.map((data: any) =>
+      create_single_point({ data, measurement })
     )
 
     // write (flush hereunder is to actually perform the operation)
@@ -159,12 +174,16 @@ exports.create_points = async (req, res, next) => {
   }
 }
 
-exports.delete_points = async (req, res, next) => {
+export const delete_points = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Deleting the whole measurement is achieved by deleting all points
 
   try {
     const { measurement } = req.params
-    const { start = new Date(0), stop = new Date() } = req.query
+    const { start = new Date(0), stop = new Date() } = req.query as any
 
     await deleteApi.postDelete({
       org,

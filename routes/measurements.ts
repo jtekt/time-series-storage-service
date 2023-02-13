@@ -1,11 +1,11 @@
-const { Router } = require("express")
-const { get_measurements } = require("../controllers/measurements.js")
-const {
+import { Router } from "express"
+import { get_measurements } from "../controllers/measurements"
+import {
   delete_points,
   create_points,
   read_points,
   read_latest_point,
-} = require("../controllers/points.js")
+} from "../controllers/points"
 
 const router = Router()
 
@@ -26,4 +26,4 @@ router
 
 router.route("/:measurement/points/latest").get(read_latest_point)
 
-module.exports = router
+export default router
