@@ -63,6 +63,7 @@ export const read_points = async (
     // Getting point count to compute the sampling from the limit
     // Note: This is per field so response will be field count x limit,
     const count_query = query + `|> count()`
+    // TODO: find type
     const record_count_query_result: any = await influx_read(count_query)
     const record_count = record_count_query_result[0]?._value // Dirty here
     if (record_count) {
@@ -92,6 +93,7 @@ export const read_latest_point = async (
 
     // Filters
     // Using let because some variable types might change
+    // TODO: find type
     let { tags = [], fields = [] } = req.query as any
 
     // NOTE: check for risks of injection
@@ -105,6 +107,7 @@ export const read_latest_point = async (
     `
 
     // Run the query
+    // TODO: find type
     const points: any = await influx_read(query)
     console.log(`Latest point of measurement ${measurement} queried`)
 
@@ -124,6 +127,7 @@ export const create_points = async (
     // measurement name from query parameters
     const { measurement } = req.params
     const { body } = req
+    // TODO: find type
     let { tags = [] } = req.query as any
 
     let items
