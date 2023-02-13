@@ -1,7 +1,5 @@
 # Time series storage microservice
 
-[<img src="https://img.shields.io/docker/pulls/moreillon/shcp?logo=docker">](https://hub.docker.com/repository/docker/moreillon/shcp)
-
 This is a simple Node.js application which allows the storage and query of time series datasets in an InfluxDB 2.0 instance via a RESTful API.
 Additionally, it can be used with an external authentication API, making it convenient for applications where InfluxDB access credentials cannot be shared.
 
