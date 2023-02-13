@@ -1,6 +1,11 @@
-const { bucket, influx_read } = require("../db")
+import { bucket, influx_read } from "../db"
+import { Request, Response, NextFunction } from "express"
 
-exports.get_measurements = async (req, res, next) => {
+export const get_measurements = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // List the available measurements in the InfluxDB Bucket
 
   try {
@@ -10,10 +15,12 @@ exports.get_measurements = async (req, res, next) => {
     `
 
     // Run the query
-    const result = await influx_read(query)
+    // TODO: find type
+    const result: any = await influx_read(query)
 
     // Extract measurements from result
-    const measurements = result.map((r) => r._value)
+    // TODO: find type
+    const measurements = result.map((r: any) => r._value)
 
     // Respond to client
     res.send(measurements)
