@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { author, name as application_name, version } from "../package.json"
 import { url, bucket, org } from "../db"
+import { Request, Response } from "express"
 
 const {
   IDENTIFICATION_URL: identification_url,
@@ -10,7 +11,7 @@ const {
 
 const router = Router()
 
-router.get("/", (req, res) => {
+router.get("/", (req: Request, res: Response) => {
   res.send({
     application_name,
     author,
