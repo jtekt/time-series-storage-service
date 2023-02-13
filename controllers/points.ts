@@ -1,4 +1,3 @@
-import createHttpError from "http-errors"
 import { org, bucket, writeApi, influx_read, deleteApi } from "../db"
 import { parse_csv_points, create_single_point } from "../utils"
 import { Request, Response, NextFunction } from "express"
