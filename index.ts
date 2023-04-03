@@ -1,3 +1,4 @@
+import "express-async-errors"
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
@@ -6,7 +7,6 @@ import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import root_router from "./routes/root"
 import measurements_router from "./routes/measurements"
 import { version } from "./package.json"
-import "express-async-errors"
 
 dotenv.config()
 
