@@ -1,1 +1,0 @@
-declare module "@moreillon/express_group_based_authorization_middleware"

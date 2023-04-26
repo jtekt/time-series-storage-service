@@ -15,7 +15,7 @@
   "dependencies": {
     "@influxdata/influxdb-client": "^1.24.0",
     "@influxdata/influxdb-client-apis": "^1.24.0",
-    "@moreillon/express_group_based_authorization_middleware": "^2.1.7",
+    "@moreillon/express_group_based_authorization_middleware": "^2.2.1",
     "@moreillon/express_identification_middleware": "^1.2.2",
     "cors": "^2.8.5",
     "csv-string": "^4.1.0",

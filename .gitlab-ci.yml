@@ -6,7 +6,6 @@ image: moreillon/tdd-dind
 services:
   - name: docker:19.03.12-dind
 
-
 variables:
   APPLICATION_NAME: time-series-storage-service
 
@@ -20,7 +19,6 @@ variables:
   TEST_DB_ORG: tdd
   TEST_DB_BUCKET: tdd
   TEST_DB_TOKEN: njK_dRkxL9fxJDnO5DbPs3nKmjC5h-4RKn8-Rk-GN2ByU-6ROurFBFuhBs66sZTE58U4wh9s78zCSZNWL9N7lg==
-
 
 build:
   stage: build
@@ -39,7 +37,6 @@ build:
     - docker build -t ${CONTAINER_IMAGE_TEST} .
     - docker push ${CONTAINER_IMAGE_TEST}
 
-
 test:
   stage: test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
@@ -48,11 +45,8 @@ test:
   tags:
     - dind
   before_script:
-    # Registry login
     - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
-    # Creating network for TDD
     - docker network create ${TEST_NETWORK}
-    # Creating DB container in network
     - >
       docker run --rm -d
       --name ${TEST_DB}
@@ -68,7 +62,6 @@ test:
     - sleep 10
 
   script:
-    # Run test
     - >
       docker run
       --rm
