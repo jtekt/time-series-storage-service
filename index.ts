@@ -8,6 +8,7 @@ import root_router from "./routes/root"
 import measurements_router from "./routes/measurements"
 import swaggerUi from "swagger-ui-express"
 import swaggerDocument from "./swagger-output.json"
+import apiMetrics from "prometheus-api-metrics"
 import { version } from "./package.json"
 
 dotenv.config()
@@ -25,6 +26,8 @@ const app = express()
 app.use(express.json({ limit: "50mb" }))
 app.use(express.text({ type: "text/*", limit: "50mb" }))
 app.use(cors())
+app.use(apiMetrics())
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use("/", root_router)
 
