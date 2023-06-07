@@ -1,10 +1,8 @@
 import CSV from "csv-string"
 import { Point } from "@influxdata/influxdb-client"
 
-// TODO: find type
-const beginsWithFloat = (val: any) => {
-  val = parseFloat(val)
-  return !isNaN(val)
+const beginsWithFloat = (val: string) => {
+  return !isNaN(parseFloat(val))
 }
 
 // TODO: find type

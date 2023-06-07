@@ -6,6 +6,8 @@ import auth from "@moreillon/express_identification_middleware"
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import root_router from "./routes/root"
 import measurements_router from "./routes/measurements"
+import swaggerUi from "swagger-ui-express"
+import swaggerDocument from "./swagger-output.json"
 import { version } from "./package.json"
 
 dotenv.config()
