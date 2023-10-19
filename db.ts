@@ -1,7 +1,7 @@
-import dotenv from "dotenv"
-import { InfluxDB, WritePrecisionType } from "@influxdata/influxdb-client"
-import { DeleteAPI } from "@influxdata/influxdb-client-apis"
-import { Agent } from "http"
+import dotenv from 'dotenv'
+import { InfluxDB, WritePrecisionType } from '@influxdata/influxdb-client'
+import { DeleteAPI, HealthAPI } from '@influxdata/influxdb-client-apis'
+import { Agent } from 'http'
 
 const agent = new Agent({
   keepAlive: true,
@@ -11,11 +11,11 @@ const agent = new Agent({
 dotenv.config()
 
 export const {
-  INFLUXDB_URL: url = "http://localhost:8086",
+  INFLUXDB_URL: url = 'http://localhost:8086',
   INFLUXDB_TOKEN: token,
-  INFLUXDB_ORG: org = "myOrg",
-  INFLUXDB_BUCKET: bucket = "mqtt_logger",
-  PRECISION: precision = "ns",
+  INFLUXDB_ORG: org = 'myOrg',
+  INFLUXDB_BUCKET: bucket = 'mqtt_logger',
+  PRECISION: precision = 'ns',
 } = process.env
 
 const influxDb = new InfluxDB({
@@ -31,6 +31,7 @@ export const writeApi = influxDb.getWriteApi(
 )
 export const queryApi = influxDb.getQueryApi(org)
 export const deleteApi = new DeleteAPI(influxDb)
+export const healthApi = new HealthAPI(influxDb)
 
 export const influx_read = (query: string) =>
   new Promise((resolve, reject) => {
@@ -52,3 +53,7 @@ export const influx_read = (query: string) =>
       },
     })
   })
+
+export const healthCheck = async () => {
+  await healthApi.getHealth()
+}
