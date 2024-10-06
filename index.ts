@@ -3,6 +3,8 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import auth from '@moreillon/express_identification_middleware'
+import oidcAuth from '@moreillon/express-oidc'
+// @ts-ignore
 import group_auth from '@moreillon/express_group_based_authorization_middleware'
 import root_router from './routes/root'
 import measurements_router from './routes/measurements'
@@ -20,6 +22,7 @@ const {
   IDENTIFICATION_URL,
   AUTHORIZED_GROUPS,
   GROUP_AUTHORIZATION_URL,
+  OIDC_JWKS_URI,
 } = process.env
 
 const promOptions = { includeMethod: true, includePath: true }
@@ -33,10 +36,12 @@ app.use(promBundle(promOptions))
 
 app.use('/', root_router)
 
-if (IDENTIFICATION_URL) {
-  console.log(`[Auth] Enabling authentication`)
-  const auth_options = { url: IDENTIFICATION_URL }
-  app.use(auth(auth_options))
+if (OIDC_JWKS_URI) {
+  console.log(`[Auth] Enabling OIDC authentication with URI ${OIDC_JWKS_URI}`)
+  app.use(oidcAuth({ jwksUri: OIDC_JWKS_URI }))
+} else if (IDENTIFICATION_URL) {
+  console.log(`[Auth] Enabling authentication with URL ${IDENTIFICATION_URL}`)
+  app.use(auth({ url: IDENTIFICATION_URL }))
 }
 
 if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
