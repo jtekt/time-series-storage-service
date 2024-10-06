@@ -4,7 +4,6 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import auth from '@moreillon/express_identification_middleware'
 import oidcAuth from '@moreillon/express-oidc'
-// @ts-ignore
 import group_auth from '@moreillon/express_group_based_authorization_middleware'
 import root_router from './routes/root'
 import measurements_router from './routes/measurements'
